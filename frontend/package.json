@@ -14,7 +14,12 @@
     "next": "15.5.2",
     "@reduxjs/toolkit": "^2.3.0",
     "react-redux": "^9.1.2",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "@mui/material": "^6.0.0",
+    "@mui/icons-material": "^6.0.0",
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
+    "framer-motion": "^11.0.0"
   },
   "devDependencies": {
     "typescript": "^5",

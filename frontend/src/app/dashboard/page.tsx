@@ -4,10 +4,12 @@ import { API_URL, apiFetch } from "@/lib/api";
 import { RootState } from "@/store/store";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, setCredentials, setUser } from "@/features/auth/authSlice";
+import { logout, setUser } from "@/features/auth/authSlice";
 import { useRouter } from "next/navigation";
 import type { AppDispatch } from "@/store/store";
 import type { MeResponse } from "@/types/auth";
+import { Container, Paper, Typography, Button, Stack } from "@mui/material";
+import { motion } from "framer-motion";
 
 export default function DashboardPage() {
   const { token, user } = useSelector((s: RootState) => s.auth);
@@ -41,23 +43,35 @@ export default function DashboardPage() {
   if (!token) return null;
 
   return (
-    <div style={{ maxWidth: 720, margin: "40px auto" }}>
-      <h1>Dashboard</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {user ? (
-        <div>
-          <p>
-            Signed in as <strong>{user.email}</strong>
-            {user.name ? ` (${user.name})` : ""}
-          </p>
-          <button onClick={onLogout}>Logout</button>
-        </div>
-      ) : (
-        <p>Loading user…</p>
-      )}
-      <div style={{ marginTop: 24 }}>
-        <p>API base: {API_URL}</p>
-      </div>
-    </div>
+    <Container maxWidth="md" sx={{ mt: 6 }}>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        <Paper sx={{ p: 4 }} elevation={4}>
+          <Typography variant="h4" sx={{ mb: 2 }}>
+            Dashboard
+          </Typography>
+          {error && (
+            <Typography color="error" variant="body2" sx={{ mb: 2 }}>
+              {error}
+            </Typography>
+          )}
+          {user ? (
+            <Stack spacing={2}>
+              <Typography>
+                Signed in as <strong>{user.email}</strong>
+                {user.name ? ` (${user.name})` : ""}
+              </Typography>
+              <Button variant="outlined" onClick={onLogout} sx={{ alignSelf: "flex-start" }}>
+                Logout
+              </Button>
+            </Stack>
+          ) : (
+            <Typography>Loading user…</Typography>
+          )}
+          <Typography variant="caption" sx={{ mt: 3, display: "block" }}>
+            API base: {API_URL}
+          </Typography>
+        </Paper>
+      </motion.div>
+    </Container>
   );
 }

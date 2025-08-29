@@ -7,6 +7,8 @@ import { apiFetch } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import type { AppDispatch } from "@/store/store";
 import type { AuthResponse, RegisterRequest } from "@/types/auth";
+import { Container, Paper, TextField, Button, Stack, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -34,44 +36,32 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{ maxWidth: 420, margin: "40px auto" }}>
-      <h1>Register</h1>
-      <form onSubmit={onSubmit}>
-        <div style={{ marginBottom: 12 }}>
-          <label>Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-            required
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-            required
-          />
-        </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Create account</button>
-      </form>
-      <p style={{ marginTop: 12 }}>
-        Have an account? <a href="/login">Login</a>
-      </p>
-    </div>
+    <Container maxWidth="sm" sx={{ mt: 6 }}>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        <Paper sx={{ p: 4 }} elevation={4}>
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            Register
+          </Typography>
+          <form onSubmit={onSubmit}>
+            <Stack spacing={2}>
+              <TextField label="Name" type="text" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
+              <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required fullWidth />
+              <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required fullWidth />
+              {error && (
+                <Typography color="error" variant="body2">
+                  {error}
+                </Typography>
+              )}
+              <Button variant="contained" type="submit">
+                Create account
+              </Button>
+              <Typography variant="body2">
+                Have an account? <a href="/login">Login</a>
+              </Typography>
+            </Stack>
+          </form>
+        </Paper>
+      </motion.div>
+    </Container>
   );
 }
