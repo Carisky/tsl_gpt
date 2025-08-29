@@ -5,29 +5,30 @@ import { useDispatch } from "react-redux";
 import { setCredentials } from "@/features/auth/authSlice";
 import { apiFetch } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import type { AppDispatch } from "@/store/store";
+import type { AuthResponse, LoginRequest } from "@/types/auth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     try {
-      const data = await apiFetch<{ user: any; token: string }>(
-        "/api/auth/login",
-        {
-          method: "POST",
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const payload: LoginRequest = { email, password };
+      const data = await apiFetch<AuthResponse>("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
       dispatch(setCredentials({ user: data.user, token: data.token }));
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Login failed";
+      setError(message);
     }
   };
 
@@ -64,4 +65,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

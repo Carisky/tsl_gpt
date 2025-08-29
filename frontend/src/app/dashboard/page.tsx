@@ -6,10 +6,12 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, setCredentials, setUser } from "@/features/auth/authSlice";
 import { useRouter } from "next/navigation";
+import type { AppDispatch } from "@/store/store";
+import type { MeResponse } from "@/types/auth";
 
 export default function DashboardPage() {
   const { token, user } = useSelector((s: RootState) => s.auth);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
@@ -20,12 +22,13 @@ export default function DashboardPage() {
     }
     (async () => {
       try {
-        const data = await apiFetch<{ user: any }>("/api/auth/me", {
+        const data = await apiFetch<MeResponse>("/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         dispatch(setUser(data.user));
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Failed to load user";
+        setError(message);
       }
     })();
   }, [token, dispatch, router]);
@@ -58,4 +61,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
