@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: tslgpt_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tslgpt
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: tslgpt_backend
+    restart: unless-stopped
+    environment:
+      PORT: 3300
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/tslgpt?schema=public
+      JWT_SECRET: supersecret_dev_key_change_me
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "3300:3300"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "npx prisma generate && (npx prisma migrate deploy || npx prisma db push) && npm run dev"
+
+  frontend:
+    build: ./frontend
+    container_name: tslgpt_frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3300
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  db-data:
