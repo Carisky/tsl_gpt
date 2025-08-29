@@ -21,16 +21,17 @@ services:
 
   backend:
     build: ./backend
+    image: cariski/tslgpt-backend:latest
     container_name: tslgpt_backend
     restart: unless-stopped
     environment:
-      PORT: 3300            # ВАЖНО: порт внутри контейнера
+      PORT: 3300
       NODE_ENV: development
       DATABASE_URL: postgresql://postgres:postgres@db:5432/tslgpt?schema=public
       JWT_SECRET: supersecret_dev_key_change_me
       CORS_ORIGIN: http://localhost:3007
     ports:
-      - "3307:3300"         # хост:контейнер
+      - "3307:3300"
     depends_on:
       db:
         condition: service_healthy
@@ -38,6 +39,7 @@ services:
 
   frontend:
     build: ./frontend
+    image: cariski/tslgpt-frontend:latest
     container_name: tslgpt_frontend
     restart: unless-stopped
     environment:
