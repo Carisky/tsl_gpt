@@ -12,7 +12,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - /opt/tslgpt/db:/var/lib/postgresql/data
+      - /opt/tsl_gpt/db:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
