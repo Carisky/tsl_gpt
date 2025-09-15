@@ -28,6 +28,17 @@ export const messages: Record<Locale, Dict> = {
     "chat.pane.placeholder": "Type a message...",
 
     "chat.new_title": "New chat",
+
+    "auth.login.title": "Welcome Back",
+    "auth.register.title": "Create Account",
+    "auth.email": "Email",
+    "auth.password": "Password",
+    "auth.name": "Name",
+    "auth.signin": "Sign In",
+    "auth.signup": "Sign Up",
+    "auth.no_account": "No account?",
+    "auth.have_account": "Have an account?",
+    "auth.forgot": "Forgot Password",
   },
   ru: {
     "nav.home": "Главная",
@@ -54,6 +65,17 @@ export const messages: Record<Locale, Dict> = {
     "chat.pane.placeholder": "Напишите сообщение...",
 
     "chat.new_title": "Новый чат",
+
+    "auth.login.title": "С возвращением",
+    "auth.register.title": "Создать аккаунт",
+    "auth.email": "Email",
+    "auth.password": "Пароль",
+    "auth.name": "Имя",
+    "auth.signin": "Войти",
+    "auth.signup": "Зарегистрироваться",
+    "auth.no_account": "Нет аккаунта?",
+    "auth.have_account": "Уже есть аккаунт?",
+    "auth.forgot": "Забыли пароль",
   },
   pl: {
     "nav.home": "Strona główna",
@@ -80,8 +102,18 @@ export const messages: Record<Locale, Dict> = {
     "chat.pane.placeholder": "Napisz wiadomość...",
 
     "chat.new_title": "Nowy czat",
+
+    "auth.login.title": "Witamy ponownie",
+    "auth.register.title": "Utwórz konto",
+    "auth.email": "Email",
+    "auth.password": "Hasło",
+    "auth.name": "Imię",
+    "auth.signin": "Zaloguj się",
+    "auth.signup": "Zarejestruj się",
+    "auth.no_account": "Nie masz konta?",
+    "auth.have_account": "Masz już konto?",
+    "auth.forgot": "Zapomniałeś hasła",
   },
 };
 
 export type Messages = typeof messages;
-
