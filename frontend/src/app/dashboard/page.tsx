@@ -12,7 +12,7 @@ import { Box, Typography, Button, Stack, Paper } from "@mui/material";
 import { useI18n } from "@/i18n/useI18n";
 import ChatSidebar from "@/features/chat/ChatSidebar";
 import ChatPane from "@/features/chat/ChatPane";
-import { chatMeta, createChat, getChat, listChats, sendMessage } from "@/lib/chatApi";
+import { chatMeta, createChat, getChat, listChats, sendMessage, updateChat } from "@/lib/chatApi";
 import type { Chat, Message } from "@/types/chat";
 
 export default function DashboardPage() {
@@ -184,14 +184,23 @@ export default function DashboardPage() {
               <Button size="small" variant="outlined" onClick={onLogout}>{t('nav.logout')}</Button>
             </Stack>
           </Stack>
-          <ChatPane
-            chat={selectedChat}
-            messages={messages}
-            onSend={onSend}
-            isSending={sending}
-            allowedModels={allowedModels.length ? allowedModels : [selectedChat?.model || 'gpt-4o-mini']}
-            currentModel={selectedChat?.model}
-          />
+        <ChatPane
+          chat={selectedChat}
+          messages={messages}
+          onSend={onSend}
+          isSending={sending}
+          allowedModels={allowedModels.length ? allowedModels : [selectedChat?.model || 'gpt-4o-mini']}
+          currentModel={selectedChat?.model}
+          onRename={async (title) => {
+            if (!token || !selectedChat) return;
+            try {
+              const resp = await updateChat(token, selectedChat.id, { title });
+              setChats((prev) => prev.map((c) => (c.id === selectedChat.id ? { ...c, title: resp.chat.title, updatedAt: resp.chat.updatedAt } : c)));
+            } catch (e) {
+              console.error(e);
+            }
+          }}
+        />
         </Box>
       </Paper>
     </Box>

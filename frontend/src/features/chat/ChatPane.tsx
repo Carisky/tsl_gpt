@@ -5,6 +5,7 @@ import type { Chat, Message } from '@/types/chat';
 import { Box, Stack, Typography, Paper, TextField, IconButton, CircularProgress, Button, Menu, MenuItem } from '@mui/material';
 import { useI18n } from '@/i18n/useI18n';
 import SendIcon from '@mui/icons-material/Send';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
   chat: Chat | null;
@@ -13,15 +14,18 @@ interface Props {
   isSending: boolean;
   allowedModels: string[];
   currentModel?: string;
+  onRename?: (title: string) => Promise<void>;
 }
 
-export default function ChatPane({ chat, messages, onSend, isSending, allowedModels, currentModel }: Props) {
+export default function ChatPane({ chat, messages, onSend, isSending, allowedModels, currentModel, onRename }: Props) {
   const { t } = useI18n();
   const [input, setInput] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedModel, setSelectedModel] = useState<string | undefined>(currentModel);
   const open = Boolean(anchorEl);
   const listRef = useRef<HTMLDivElement>(null);
+  const [editing, setEditing] = useState(false);
+  const [draftTitle, setDraftTitle] = useState('');
 
   useEffect(() => {
     setSelectedModel(currentModel);
@@ -38,10 +42,46 @@ export default function ChatPane({ chat, messages, onSend, isSending, allowedMod
     await onSend(text, selectedModel);
   };
 
+  useEffect(() => {
+    if (chat && editing) setDraftTitle(chat.title);
+  }, [chat, editing]);
+
+  const submitRename = async () => {
+    const title = draftTitle.trim();
+    if (!chat || !title || !onRename) {
+      setEditing(false);
+      return;
+    }
+    await onRename(title);
+    setEditing(false);
+  };
+
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'hidden' }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
-        <Typography variant="subtitle1" fontWeight={600}>{chat ? chat.title : t('chat.pane.select_chat')}</Typography>
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: 0 }}>
+          {editing ? (
+            <TextField
+              size="small"
+              autoFocus
+              value={draftTitle}
+              onChange={(e) => setDraftTitle(e.target.value)}
+              onBlur={submitRename}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') { e.preventDefault(); submitRename(); }
+                if (e.key === 'Escape') { setEditing(false); }
+              }}
+              sx={{ maxWidth: 360 }}
+            />
+          ) : (
+            <Typography variant="subtitle1" fontWeight={600} noWrap>{chat ? chat.title : t('chat.pane.select_chat')}</Typography>
+          )}
+          {!editing && chat && (
+            <IconButton size="small" onClick={() => setEditing(true)} aria-label="rename chat">
+              <EditIcon fontSize="small" />
+            </IconButton>
+          )}
+        </Stack>
         <div>
           <Button variant="outlined" size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
             {selectedModel || currentModel || t('chat.pane.model')}

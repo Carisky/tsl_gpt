@@ -87,6 +87,28 @@ export const deleteChat = async (req: AuthRequest, res: Response, next: NextFunc
   }
 };
 
+export const updateChat = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
+    const chatId = Number(req.params.id);
+    if (Number.isNaN(chatId)) return res.status(400).json({ message: 'Invalid chat id' });
+    const schema = z.object({ title: z.string().min(1).max(100) });
+    const body = schema.parse(req.body ?? {});
+
+    const chat = await prisma.chat.findFirst({ where: { id: chatId, userId: req.user.id } });
+    if (!chat) return res.status(404).json({ message: 'Chat not found' });
+
+    const updated = await prisma.chat.update({
+      where: { id: chatId },
+      data: { title: body.title },
+      select: { id: true, title: true, model: true, createdAt: true, updatedAt: true },
+    });
+    res.json({ chat: updated });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const sendMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'Unauthorized' });

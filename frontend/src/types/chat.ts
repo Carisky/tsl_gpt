@@ -43,3 +43,10 @@ export interface SendMessageResponse {
   reply: Message;   // assistant reply
 }
 
+export interface UpdateChatRequest {
+  title: string;
+}
+
+export interface UpdateChatResponse {
+  chat: Chat;
+}

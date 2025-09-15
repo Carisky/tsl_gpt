@@ -6,6 +6,8 @@ import type {
   CreateChatResponse,
   SendMessageRequest,
   SendMessageResponse,
+  UpdateChatRequest,
+  UpdateChatResponse,
 } from '@/types/chat';
 
 export async function chatMeta(token: string) {
@@ -37,6 +39,14 @@ export async function getChat(token: string, id: number) {
 export async function sendMessage(token: string, id: number, body: SendMessageRequest) {
   return apiFetch<SendMessageResponse>(`/api/chats/${id}/messages`, {
     method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body),
+  });
+}
+
+export async function updateChat(token: string, id: number, body: UpdateChatRequest) {
+  return apiFetch<UpdateChatResponse>(`/api/chats/${id}`, {
+    method: 'PUT',
     headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify(body),
   });
