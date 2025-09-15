@@ -6,16 +6,18 @@ import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
 import authReducer from "@/features/auth/authSlice";
 import uiReducer from "@/features/ui/themeSlice";
+import i18nReducer from "@/features/i18n/i18nSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   ui: uiReducer,
+  i18n: i18nReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "ui"],
+  whitelist: ["auth", "ui", "i18n"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
