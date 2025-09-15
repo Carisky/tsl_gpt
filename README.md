@@ -24,6 +24,10 @@ Notes:
   - `PORT=3300`
   - `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tslgpt?schema=public`
   - `JWT_SECRET=...`
+  - `OPENAI_API_KEY=sk-...` (optional; required only if не использовать мок)
+  - `ALLOWED_MODELS=gpt-4o-mini,gpt-4o,gpt-4.1-mini,o3-mini`
+  - `DEFAULT_MODEL=gpt-4o-mini`
+  - `MOCK_AI=true` — локальный режим без OpenAI; если ключ не задан и `NODE_ENV!==production`, мок включится автоматически
 - Frontend (`frontend/.env.local` suggested):
   - `NEXT_PUBLIC_API_URL=http://localhost:3300`
 
@@ -39,8 +43,24 @@ Notes:
 - `PUT /api/auth/me` { name?, password? } (Bearer token)
 - `DELETE /api/auth/me` (Bearer token)
 
+## Chat Endpoints (Bearer token required)
+- `GET /api/chats/meta` → `{ allowedModels, defaultModel }`
+- `GET /api/chats` → list user's chats
+- `POST /api/chats` → create chat `{ title?, model? }`
+- `GET /api/chats/:id` → chat + messages
+- `POST /api/chats/:id/messages` → send message `{ content, model? }`, returns `{ message, reply }`
+- `DELETE /api/chats/:id` → delete chat
+
+Note: Prisma schema now includes `Chat` and `Message`. Create migration and update DB:
+- Dev: `cd backend && npx prisma migrate dev --name add_chat`
+- Or: `cd backend && npx prisma db push` (no migration history)
+
+### Локальная разработка без OpenAI
+- Поставьте `MOCK_AI=true` (или не указывайте `OPENAI_API_KEY` в dev). 
+- Бэкенд сохранит сообщения как обычно и вернёт сгенерированный мок‑ответ вида «Мок-ответ (локальный режим): …». 
+- Это позволяет пилить UI и логику без внешнего API.
+
 ## Frontend pages
 - `/login` – Sign in form
 - `/register` – Registration form
 - `/dashboard` – Protected dashboard showing current user
-
