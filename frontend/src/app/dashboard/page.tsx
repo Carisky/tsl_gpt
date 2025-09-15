@@ -8,7 +8,7 @@ import { logout, setUser } from "@/features/auth/authSlice";
 import { useRouter } from "next/navigation";
 import type { AppDispatch } from "@/store/store";
 import type { MeResponse } from "@/types/auth";
-import { Box, Typography, Button, Stack } from "@mui/material";
+import { Box, Typography, Button, Stack, Paper } from "@mui/material";
 import { useI18n } from "@/i18n/useI18n";
 import ChatSidebar from "@/features/chat/ChatSidebar";
 import ChatPane from "@/features/chat/ChatPane";
@@ -139,25 +139,61 @@ export default function DashboardPage() {
   if (!token) return null;
 
   return (
-    <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)', overflow: 'hidden', minHeight: 0 }}>
-      <ChatSidebar chats={chats} selectedChatId={selectedChatId} onSelect={setSelectedChatId} onCreate={onCreateChat} onDelete={onDeleteChat} />
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 1, borderBottom: 1, borderColor: 'divider' }}>
-          <Typography variant="h6">{t('chat.header.title')}</Typography>
-          <Stack direction="row" spacing={2} alignItems="center">
-            {user && <Typography variant="body2">{user.email}{user.name ? ` (${user.name})` : ''}</Typography>}
-            <Button size="small" variant="outlined" onClick={onLogout}>{t('nav.logout')}</Button>
+    <Box sx={{
+      display: 'flex',
+      height: 'calc(100vh - 64px)',
+      overflow: 'hidden',
+      minHeight: 0,
+      background: 'radial-gradient(1200px 500px at -10% -10%, rgba(124,77,255,0.15), transparent), radial-gradient(800px 400px at 120% 120%, rgba(64,196,255,0.15), transparent)'
+    }}>
+      <Paper elevation={0} sx={{
+        width: '100%',
+        height: '100%',
+        borderRadius: 0,
+        overflow: 'hidden',
+        display: 'flex',
+        minHeight: 0,
+        bgcolor: 'transparent'
+      }}>
+        {/* Left gradient column with chat history */}
+        <Box sx={{
+          width: 320,
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: 0,
+          color: 'common.white',
+          background: 'linear-gradient(135deg, #7C4DFF, #40C4FF)',
+        }}>
+          <Box sx={{ flex: 1, minHeight: 0, bgcolor: 'rgba(0,0,0,0.15)' }}>
+            <ChatSidebar
+              chats={chats}
+              selectedChatId={selectedChatId}
+              onSelect={setSelectedChatId}
+              onCreate={onCreateChat}
+              onDelete={onDeleteChat}
+            />
+          </Box>
+        </Box>
+
+        {/* Right main chat column */}
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+            <Typography variant="h6">{t('chat.header.title')}</Typography>
+            <Stack direction="row" spacing={2} alignItems="center">
+              {user && <Typography variant="body2">{user.email}{user.name ? ` (${user.name})` : ''}</Typography>}
+              <Button size="small" variant="outlined" onClick={onLogout}>{t('nav.logout')}</Button>
+            </Stack>
           </Stack>
-        </Stack>
-        <ChatPane
-          chat={selectedChat}
-          messages={messages}
-          onSend={onSend}
-          isSending={sending}
-          allowedModels={allowedModels.length ? allowedModels : [selectedChat?.model || 'gpt-4o-mini']}
-          currentModel={selectedChat?.model}
-        />
-      </Box>
+          <ChatPane
+            chat={selectedChat}
+            messages={messages}
+            onSend={onSend}
+            isSending={sending}
+            allowedModels={allowedModels.length ? allowedModels : [selectedChat?.model || 'gpt-4o-mini']}
+            currentModel={selectedChat?.model}
+          />
+        </Box>
+      </Paper>
     </Box>
   );
 }
